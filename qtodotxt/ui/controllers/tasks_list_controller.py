@@ -193,6 +193,9 @@ class TasksListController(QtCore.QObject):
         return text
 
     def createTask(self):
+        if not self._useTaskDialog:
+            self.view.createTask()
+            return
         (text, ok) = self._task_editor_service.createTask()
         if ok and text:
             if int(QtCore.QSettings().value("add_created_date", 0)):
