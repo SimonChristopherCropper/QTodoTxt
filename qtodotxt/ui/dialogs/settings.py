@@ -13,12 +13,14 @@ class Settings(QtWidgets.QDialog):
         self.ui = Ui_SettingsUI()
         self.ui.setupUi(self)
         self.settings = QtCore.QSettings()
-        self.setWindowFlags(QtCore.Qt.Dialog
-                            | QtCore.Qt.MSWindowsFixedSizeDialogHint
-                            | QtCore.Qt.WindowStaysOnBottomHint
-                            | QtCore.Qt.WindowSystemMenuHint
-                            | QtCore.Qt.WindowTitleHint
-                            | QtCore.Qt.WindowCloseButtonHint)
+        self.setWindowFlags(
+                QtCore.Qt.Dialog |
+                QtCore.Qt.MSWindowsFixedSizeDialogHint |
+                QtCore.Qt.WindowStaysOnBottomHint |
+                QtCore.Qt.WindowSystemMenuHint |
+                QtCore.Qt.WindowTitleHint |
+                QtCore.Qt.WindowCloseButtonHint
+                )
 
         self.load_settings()
         self.connect_all()
@@ -43,9 +45,9 @@ class Settings(QtWidgets.QDialog):
         self.ui.closeToTrayCheckBox.setEnabled(val)
 
         val = self.settings.value("color_schem", "")
-        index = self.ui.colorSchemCombo.findText(val, QtCore.Qt.MatchFixedString)
+        index = self.ui.colorSchemComboBox.findText(val, QtCore.Qt.MatchFixedString)
         if index >= 0:
-            self.ui.colorSchemCombo.setCurrentIndex(index)
+            self.ui.colorSchemComboBox.setCurrentIndex(index)
 
     def _int_settings_to_cb(self, name, checkBox, default=1):
         val = int(self.settings.value(name, default))
@@ -67,7 +69,7 @@ class Settings(QtWidgets.QDialog):
         self.ui.hideToTrayCheckBox.stateChanged.connect(self.setHideToTray)
         self.ui.hideOnStartupCheckBox.stateChanged.connect(self.setHideOnStartup)
         self.ui.closeToTrayCheckBox.stateChanged.connect(self.setCloseToTray)
-        self.ui.colorSchemCombo.currentIndexChanged.connect(self.setColorSchemCombo)
+        self.ui.colorSchemComboBox.currentIndexChanged.connect(self.setColorSchemCombo)
 
     def _save_int_cb(self, name, val):
         if val == 0:
@@ -116,7 +118,7 @@ class Settings(QtWidgets.QDialog):
         self.maincontroller.view.show()
 
     def setColorSchemCombo(self, val):
-        name = self.ui.colorSchemCombo.itemText(val)
+        name = self.ui.colorSchemComboBox.itemText(val)
         self.settings.setValue("color_schem", name)
 
 

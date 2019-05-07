@@ -1,28 +1,20 @@
 from datetime import datetime
-import re
 from PyQt5 import QtCore
 
 
 class TaskHtmlizer(object):
-
     def __init__(self):
         colorSchemName = QtCore.QSettings().value("color_schem", "")
-        if str(colorSchemName).find("dark") >= 0:   # for dark theme
-            self.priority_colors = dict(
-                A='red',
-                B='#1C7F61',
-                C='#7397BE')
+        if str(colorSchemName).find("dark") >= 0:  # for dark theme
+            self.priority_colors = dict(A='red', B='#1C7F61', C='#7397BE')
             self.contextColor = "#5ED2B8"
             self.projectColor = "#FFCA73"
             self.priorityDuecolors = ['red', '#E0A180']
             self.priorityThresholdColors = ['orange', 'grey']
             self.errorColor = "red"
             self.linkColor = "#E0A180"
-        else:                                    # for light theme
-            self.priority_colors = dict(
-                A='red',
-                B='green',
-                C='navy')
+        else:  # for light theme
+            self.priority_colors = dict(A='red', B='green', C='navy')
             self.contextColor = "green"
             self.projectColor = "#64AAD0"
             self.priorityDuecolors = ['red', 'orange']
@@ -62,9 +54,21 @@ class TaskHtmlizer(object):
         return html
 
     def _addUrl(self, word, color="none"):
-        cleanWord = re.sub(r"https?://", "", word)
+        if ("http" in word) or ("www." in word):
+            parts = word.split('//', 1)
+            parts2 = parts[1].split('/')
+            end = parts2[0]
+            if len(parts2) > 1:
+                end += "/..."
+            cleanWord = parts[0] + '//' + end
+        else:
+            parts = word.split('/')
+            if len(parts[-1]):
+                cleanWord = parts[-1]
+            else:
+                cleanWord = parts[-2]
+            cleanWord = "../" + cleanWord
         word = '<a style="color:{2!s};" href="{0!s}">{1!s}</a>'.format(word, cleanWord, color)
-
         return word
 
     def _htmlizeContext(self, context):
@@ -97,9 +101,11 @@ class TaskHtmlizer(object):
         if tdelta.days > 7:
             return '<b>due:{}</b>'.format(task.dueString)
         elif tdelta.days > 0:
-            return '<b><font style="color:{1!s}">due:{0!s}</font></b>'.format(task.dueString, self.priorityDuecolors[1])
+            return '<b><font style="color:{1!s}">due:{0!s}</font></b>'.format(task.dueString,
+                                                                              self.priorityDuecolors[1])
         else:
-            return '<b><font style="color:{1!s}">due:{0!s}</font></b>'.format(task.dueString, self.priorityDuecolors[0])
+            return '<b><font style="color:{1!s}">due:{0!s}</font></b>'.format(task.dueString,
+                                                                              self.priorityDuecolors[0])
 
     def _htmlizeThresholdDate(self, task, string):
         if not task.threshold:
